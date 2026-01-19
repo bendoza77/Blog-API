@@ -72,8 +72,14 @@ const userSchema = new mongoose.Schema({
     isActive: {
         type: Boolean,
         default: false
+    },
+
+    postId: {
+        type: mongoose.Types.ObjectId,
+        ref: "Posts",
+        require: [true, "Post id is required"]
     }
-})
+}, {timestamps: true})
 
 userSchema.pre("save", async function () {
     if (!this.isModified("password")) {
@@ -92,6 +98,6 @@ userSchema.methods.comparePasswords = async (candidate, password) => {
 }
 
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model("Users", userSchema);
 
 module.exports = User;  

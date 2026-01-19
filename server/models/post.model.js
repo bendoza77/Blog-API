@@ -43,11 +43,18 @@ const postShema = new mongoose.Schema({
 
     userId: {
         type: mongoose.Types.ObjectId,
+        ref: "Users",
         require: [true, "user id is required"]
-    }
+    },
+
+    commentId: [{
+        type: mongoose.Types.ObjectId,
+        ref: "Comments",
+        requrie: [true, "Comment id is required"]
+    }]
 
 
-})
+}, {timestamps: true})
 
 const Post = mongoose.model("Posts", postShema);
 

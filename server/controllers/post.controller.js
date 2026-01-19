@@ -94,15 +94,6 @@ const updatePostById = CatchAsync(async (req, res, next) => {
     const post = await Post.findById(req.params.id);
 
     if (!post) return next(new AppError("Post not found", 404));
-
-    let imageUrls = post.images;
-    if (!req.files || req.files.length === 0) {
-        return next(new AppError("At least one image", 400));
-    }
-
-    const images = req.files.map(file => file.path);
-    const result = await imageUpload("images", images);
-    imageUrls = result.map(el => ({url: el.url, public_id: el.public_id}));
     
     if (title) post.title = title;
     if (content) post.content = content;

@@ -5,6 +5,7 @@ const HandleGlobalError = require("./controllers/error.controller");
 const userRouter = require("./routers/user.router");
 const authRouter = require("./routers/auth.router");
 const postRouter = require("./routers/post.router");
+const commentRouter = require("./routers/comment.router");
 require("dotenv").config();
 
 const app = express();
@@ -17,8 +18,9 @@ app.use(express.json());
 
 // routers
 app.use("/api/users", userRouter);
-app.use("/api/auth", authRouter);
+app.use("/api/auths", authRouter);
 app.use("/api/posts", postRouter);
+app.use("/api/comments", commentRouter)
 
 // global erro hanlder middlware function
 app.use(HandleGlobalError)
