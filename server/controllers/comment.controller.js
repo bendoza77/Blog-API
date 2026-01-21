@@ -105,6 +105,10 @@ const updateCommentById = CatchAsync(async (req, res, next) => {
 
     if (!comment) return next(new AppError("Comment not found", 404));
 
+    if (comment.userId.toString() !== req.user._id.toString()) {
+        return next(new AppError("You dont have permission to update other user comment", 404));
+    }
+
     if (text) comment.text = text;
 
     await comment.save({validateBeforeSave: true});

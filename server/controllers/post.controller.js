@@ -2,7 +2,7 @@ const { default: mongoose } = require("mongoose");
 const Post = require("../models/post.model");
 const CatchAsync = require("../utils/CatchAsync");
 const AppError = require("../utils/AppError");
-const { imageUpload } = require("../utils/images");
+const { imageUpload, deleteImage } = require("../utils/images");
 
 const getPosts = CatchAsync(async (req, res, next) => {
 
@@ -35,14 +35,16 @@ const getPostById = CatchAsync(async (req, res, next) => {
 
 const createPost = CatchAsync(async (req, res, next) => {
 
-    if (!req.files || req.files.length === 0) {
-        return next(new AppError("At least one image", 400));
-    }
 
     const { title, content} = req.body;
-    const images = req.files.map(file => file.path);
-    const result = imageUpload("images", images);
-    const imageUrls = result.map(el => ({url: el.secure_url, public_id: el.public_id}));
+
+    let imageUrls;
+
+    if (req.files.length > 0) {
+        const images = req.files.map(file => file.path);
+        const result = await imageUpload("images", images);
+        imageUrls = result.map(el => ({url: el.secure_url, public_id: el.public_id}));
+    }
 
     
     if (!title || !content) {
@@ -54,7 +56,7 @@ const createPost = CatchAsync(async (req, res, next) => {
         userId: req.user._id,
         title,
         content,
-        images: imageUrls
+        postImgs: req.files ? imageUrls : null
     })
 
     return res.json({
@@ -76,9 +78,21 @@ const deletePostById = CatchAsync(async (req, res, next) => {
         return next(new AppError("Id is invalid"));
     }
 
-    const post = await Post.findByIdAndDelete(id);
- 
-    if (!post) return next(new AppError("User not found", 404));
+    const post = await Post.findById(id)
+
+    if (!post) return next(new AppError("Post not found", 404));
+
+    if (post.postImgs.length > 0) {
+        const promises = post.postImgs.map(image => deleteImage(image.public_id));
+        await Promise.all(promises);
+    }
+
+    if (post.userId.toString() !== req.user._id.toString()) {
+        return next(new AppError("You dont have permission to delete other user post", 404));
+    }
+
+    await Post.findByIdAndDelete(id);
+
 
     return res.json({
         status: "succasse",
@@ -94,6 +108,10 @@ const updatePostById = CatchAsync(async (req, res, next) => {
     const post = await Post.findById(req.params.id);
 
     if (!post) return next(new AppError("Post not found", 404));
+
+    if (post.userId.toString() !== req.user._id.toString()) {
+        return next(new AppError("You dont have permission to update another user post", 404));
+    }
     
     if (title) post.title = title;
     if (content) post.content = content;

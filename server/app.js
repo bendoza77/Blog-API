@@ -6,6 +6,7 @@ const userRouter = require("./routers/user.router");
 const authRouter = require("./routers/auth.router");
 const postRouter = require("./routers/post.router");
 const commentRouter = require("./routers/comment.router");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const app = express();
@@ -15,6 +16,7 @@ if (process.env.NODE_ENV === "dev") {
 }
 
 app.use(express.json());
+app.use(cookieParser());
 
 // routers
 app.use("/api/users", userRouter);

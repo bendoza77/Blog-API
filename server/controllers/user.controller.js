@@ -35,9 +35,15 @@ const deleteUserById = CatchAsync(async (req, res, next) => {
 
     if (!mongoose.Types.ObjectId.isValid(id)) return next(new AppError("Id is invalid", 404));
 
-    const deleteUser = await User.findByIdAndDelete(id);
+    const user = await User.findById(id);
 
-    if (!deleteUser) return next(new AppError("User not found", 404));
+    if (!user) return next(new AppError("User not found", 404));
+
+    if (user._id.toString() !== req.user._id.toString()) {
+        return next(new AppError("You dont have permission to delete other user accounte", 404));
+    }
+
+    await User.findByIdAndDelete(id);
 
     return res.json({
         status: "succasse",
@@ -57,11 +63,17 @@ const updateUserById = CatchAsync(async (req, res, next) => {
 
     if (!user) return next(new AppError("User not found", 404));
 
+    if (user._id.toString() !== req.user._id.toString()) {
+        return next(new AppError("You dont have permission to update other user accounte information", 404));
+    }
+
     for (const [key, value] of Object.entries(data)) {
         if (value !== "") {
             user[key] = value
         }
     }
+
+    await user.save();
 
     return res.json({
         status: "succasse",

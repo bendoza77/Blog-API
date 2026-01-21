@@ -53,7 +53,7 @@ const userSchema = new mongoose.Schema({
         trim: true,
         validate: {
             validator: function (password) {
-                return /\s/.test(password)
+                return !password.includes(" ");
             },
 
             message: "Password must not contain spaces"
@@ -74,11 +74,12 @@ const userSchema = new mongoose.Schema({
         default: false
     },
 
-    postId: {
+    postId: [{
         type: mongoose.Types.ObjectId,
         ref: "Posts",
         require: [true, "Post id is required"]
-    }
+    }]
+
 }, {timestamps: true})
 
 userSchema.pre("save", async function () {
@@ -86,7 +87,7 @@ userSchema.pre("save", async function () {
         return;
     }
 
-    this.password = bcrypt.hash(this.password, 12);
+    this.password = await bcrypt.hash(this.password, 12);
 })
 
 userSchema.methods.signToken = function () {

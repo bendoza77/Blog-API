@@ -19,7 +19,8 @@ const createSendToken = (user, statusCode, message, res) => {
 
     return res.status(statusCode).json({
         status: "succasse",
-        messsage: message
+        messsage: message,
+        data: { user }
     })
   
 }
@@ -28,6 +29,7 @@ const createSendToken = (user, statusCode, message, res) => {
 const signup = CatchAsync(async (req, res, next) => {
 
     const { firstName, lastName, email, password } = req.body
+    const { file } = req;
 
     if (!firstName || !lastName || !email || !password) {
         return next(new AppError("All field is required", 400));
@@ -37,7 +39,8 @@ const signup = CatchAsync(async (req, res, next) => {
         firstName,
         lastName,
         email,
-        password
+        password,
+        profileImg: file ? file.filename : null
     });
 
     createSendToken(newUser, 201, "You create accounte succassefuly", res);
@@ -63,7 +66,42 @@ const login = CatchAsync(async (req, res, next) => {
 
 })
 
+const logout = CatchAsync(async (req, res, next) => {
+    
+
+    res.clearCookie("ls", {
+        maxAge: ms(process.env.JWT_EXPIRES),
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== "dev",
+        samSite: "Lax",
+    })
+
+    return res.json({
+        status: "succasse",
+        message: "You logout succassefuly"
+    })
+
+
+})
+
+const autoLogin = CatchAsync(async (req, res, next) => {
+
+    const { user } = req;
+
+    if (user) {
+        return res.json({
+            status: "succasse",
+            data: { user }
+        })
+    }
+
+
+
+})
+
 module.exports = {
     signup,
-    login
+    login,
+    autoLogin,
+    logout
 }

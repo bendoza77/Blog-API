@@ -5,21 +5,25 @@ const jwt = require("jsonwebtoken");
 
 const protect = CatchAsync(async (req, res, next) => {
 
-    const ls = req.cookies?.ls;
+    try {
+        const ls = req.cookies?.ls;
 
-    if (!ls) return next(new AppError("User is not login", 401));
+        if (!ls) return next(new AppError("User is not login", 401));
 
-    const decode = jwt.verify(ls, process.env.JWT_SECRET);
+        const decode = jwt.verify(ls, process.env.JWT_SECRET);
 
-    if (!decode) return next(new AppError("Ls is invalid", 404));
+        if (!decode) return next(new AppError("Ls is invalid", 404));
 
-    const user = await User.findById(decode._id);
+        const user = await User.findById(decode.id);
 
-    if (!user) return next(new AppError("User not found", 404));
+        if (!user) return next(new AppError("User not found", 404));
 
-    req.user = user;
+        req.user = user;
 
-    next();
+        next();
+    } catch(error) {
+        console.log(error);
+    }
 
 })
 

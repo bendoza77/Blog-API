@@ -25,7 +25,7 @@ const postShema = new mongoose.Schema({
         default: 0,
     },
 
-    images: [{
+    postImgs: [{
         public_id: {
             type: String,
             require: true,
