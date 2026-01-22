@@ -2,6 +2,8 @@ const { default: mongoose } = require("mongoose");
 const CatchAsync = require("../utils/CatchAsync");
 const AppError = require("../utils/AppError");
 const Comment = require("../models/comment.model");
+const { imageUpload, deleteImage } = require("../utils/images");
+const Post = require("../models/post.model");
 
 
 const getComments = CatchAsync(async (req, res, next) => {
@@ -38,6 +40,7 @@ const createComment = CatchAsync(async (req, res, next) => {
 
     const { text } = req.body;
     const { id } = req.params;
+    const { file } = req;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return next(new AppError("Id is invalid", 404));
@@ -49,11 +52,19 @@ const createComment = CatchAsync(async (req, res, next) => {
 
     if (!post) return next(new AppError("Post not found", 404));
 
+    let img;
+
+    if (file) {
+        const result = await imageUpload("commentImg", file.path);
+        img = {url: result.secure_url, public_id: result.public_id};
+    }
+
     const newComment = await Comment.create({
         user: `${req.user.firstName} ${req.user.lastName}`,
         text,
         postId: post._id,
-        userId: req.user._id
+        userId: req.user._id,
+        commentImg: file ? img : null
     })
 
     return res.json({
@@ -81,6 +92,10 @@ const deleteCommentById = CatchAsync(async (req, res, next) => {
         return next(new AppError("You dont have permission to delete another user comment", 404));
     }
 
+    if (comment.commentImg) {
+        await deleteImage(comment.commentImg.public_id);
+    }
+
     await Comment.findByIdAndDelete(id);
 
     return res.json({
@@ -95,7 +110,8 @@ const deleteCommentById = CatchAsync(async (req, res, next) => {
 const updateCommentById = CatchAsync(async (req, res, next) => {
 
     const { text } = req.body;
-    const { id } = req.body;
+    const { id } = req.params;
+    const { file } = req;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return next(new AppError("Id is invalid", 404));
@@ -109,7 +125,16 @@ const updateCommentById = CatchAsync(async (req, res, next) => {
         return next(new AppError("You dont have permission to update other user comment", 404));
     }
 
+    let img;
+
+    if (file) {
+        await deleteImage(comment.commentImg.public_id);
+        const result = await imageUpload("commentImg", file.path);
+        img = result;
+    }
+
     if (text) comment.text = text;
+    if (img) comment.commentImg = img;
 
     await comment.save({validateBeforeSave: true});
 

@@ -11,6 +11,6 @@ post(protect, allowedTo("user"), upload.single("commentImg"), createComment);
 
 commentRouter.route("/:id").get(protect, allowedTo("user", "admin", "moderator"), getCommentById).
 delete(protect, allowedTo("user"), deleteCommentById).
-patch(protect, allowedTo("user"), updateCommentById);
+patch(protect, allowedTo("user"), upload.single("commentImg"), updateCommentById);
 
 module.exports = commentRouter

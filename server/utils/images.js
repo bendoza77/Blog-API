@@ -17,8 +17,17 @@ const options = {
 const imageUpload = async (folder, files) => {
 
     try {
-        const uploadProimeses = files.map(file => cloudinary.uploader.upload(file, {...options, folder}));
-        const result = await Promise.all(uploadProimeses);
+
+        let uploadProimeses;
+        let result;
+
+
+        if (typeof files === "string") {
+            result = await cloudinary.uploader.upload(files, {...options, folder});
+        } else {
+            uploadProimeses = files.map(file => cloudinary.uploader.upload(file, {...options, folder}));
+            result = await Promise.all(uploadProimeses);
+        } 
 
         return result;
 

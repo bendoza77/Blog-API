@@ -10,6 +10,6 @@ postRouter.route("/").get(protect, getPosts).post(protect, allowedTo("user"), up
 
 postRouter.route("/:id").get(protect, allowedTo("user", "admin", "moderator"), getPostById).
 delete(protect, allowedTo("user"), deletePostById).
-patch(protect, allowedTo("user"), updatePostById);
+patch(protect, allowedTo("user"), upload.single("postImg"), updatePostById);
 
 module.exports = postRouter

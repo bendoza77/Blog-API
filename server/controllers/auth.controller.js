@@ -2,6 +2,7 @@ const ms = require("ms");
 const CatchAsync = require("../utils/CatchAsync");
 const AppError = require("../utils/AppError");
 const User = require("../models/user.model");
+const { imageUpload } = require("../utils/images");
 
 const createSendToken = (user, statusCode, message, res) => {
 
@@ -31,6 +32,14 @@ const signup = CatchAsync(async (req, res, next) => {
     const { firstName, lastName, email, password } = req.body
     const { file } = req;
 
+    let img;
+
+    if (file) {
+        const result = await imageUpload("profileImage", file.path);
+        img = {url: result.secure_url, public_id: result.public_id}
+
+    }
+
     if (!firstName || !lastName || !email || !password) {
         return next(new AppError("All field is required", 400));
     }
@@ -40,7 +49,7 @@ const signup = CatchAsync(async (req, res, next) => {
         lastName,
         email,
         password,
-        profileImg: file ? file.filename : null
+        profileImg: file ? img : "./images/account-icon-user-icon-vector-graphics_292645-552.avif"
     });
 
     createSendToken(newUser, 201, "You create accounte succassefuly", res);

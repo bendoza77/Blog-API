@@ -61,7 +61,17 @@ const userSchema = new mongoose.Schema({
         Selection: false
     },
 
-    profileImg: String,
+    profileImg: {
+        public_id: {
+            type: String,
+            require: true,
+        },
+
+        url: {
+            type: String,
+            require: true
+        }
+    },
 
     role: {
         type: String,

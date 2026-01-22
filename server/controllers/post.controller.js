@@ -16,12 +16,15 @@ const getPosts = CatchAsync(async (req, res, next) => {
 const getPostById = CatchAsync(async (req, res, next) => {
 
     const { id } = req.params
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return next(new AppError("Id is invalid", 404));
     }
 
-    const post = await Post.findById(id);
+    const post = await Post.findById(id).skip(skip).limit(limit);
 
     if (!post) {
         return next(new AppError("Post not found", 404));
@@ -104,6 +107,8 @@ const deletePostById = CatchAsync(async (req, res, next) => {
 const updatePostById = CatchAsync(async (req, res, next) => {
 
     const { title, content } = req.body;
+    const { imageId } = req.query;
+    const { file } = req;
 
     const post = await Post.findById(req.params.id);
 
@@ -112,9 +117,22 @@ const updatePostById = CatchAsync(async (req, res, next) => {
     if (post.userId.toString() !== req.user._id.toString()) {
         return next(new AppError("You dont have permission to update another user post", 404));
     }
+
+    let img;
+
+    if (file && imageId) {
+        const image = post.postImgs.find(el => el._id === imageId);
+        await deleteImage(image.public_id);
+        const result = await imageUpload("postImg", file.path);
+        img = {url: result.secure_url, public_id: result.public_id};
+    }
     
     if (title) post.title = title;
     if (content) post.content = content;
+    if (img) {
+        const updatePostImgs = post.postImgs.map(el => el._id === imageId ? img : el);
+        post.postImgs = updatePostImgs
+    }
 
     await post.save();
 
