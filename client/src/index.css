@@ -1,0 +1,43 @@
+@import 'tailwindcss';
+
+@layer base {
+  :root {
+    font-family: 'Inter Tight', 'Space Grotesk', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color-scheme: light;
+    --bg-gradient-start: #f4f0ff;
+    --bg-gradient-mid: #fff;
+    --bg-gradient-end: #fef6f3;
+    --text-primary: #0f172a;
+    --text-muted: #5f6c80;
+    --primary: #7c3aed;
+    --primary-strong: #5b21b6;
+    --accent: #f97316;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text-primary);
+    background: linear-gradient(180deg, var(--bg-gradient-start), var(--bg-gradient-mid) 40%, var(--bg-gradient-end));
+  }
+
+  ::selection {
+    background: var(--primary-strong);
+    color: white;
+  }
+}
+
+@layer utilities {
+  .animate-marquee {
+    animation: marquee 18s linear infinite;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

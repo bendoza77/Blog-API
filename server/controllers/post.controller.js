@@ -13,6 +13,18 @@ const getPosts = CatchAsync(async (req, res, next) => {
     })
 })
 
+const getPublicPosts = CatchAsync(async (req, res, next) => {
+
+    const posts = await Post.find()
+        .sort({ createdAt: -1 })
+        .limit(parseInt(req.query.limit) || 12);
+
+    return res.json({
+        status: "success",
+        data: posts
+    });
+})
+
 const getPostById = CatchAsync(async (req, res, next) => {
 
     const { id } = req.params
@@ -140,6 +152,7 @@ const updatePostById = CatchAsync(async (req, res, next) => {
 
 module.exports = {
     getPosts,
+    getPublicPosts,
     getPostById,
     deletePostById,
     updatePostById,
