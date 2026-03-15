@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Services from '../components/Services'
 import Gallery from '../components/Gallery'
@@ -22,6 +23,7 @@ const perks = [
 
 const ServicesPage = () => {
   const navigate = useNavigate()
+  useEffect(() => { document.title = 'Services — ÆTHER' }, [])
 
   return (
     <PageShell>

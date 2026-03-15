@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, Clock, Tag } from 'lucide-react'
 import { featuredArticles } from '../data/articles'
@@ -5,7 +6,9 @@ import PageShell from '../components/PageShell'
 
 const ease = [0.22, 1, 0.36, 1]
 
-const Journal = () => (
+const Journal = () => {
+  useEffect(() => { document.title = 'Journal — ÆTHER' }, [])
+  return (
   <PageShell>
     {/* Hero */}
     <section className="mx-auto max-w-6xl px-6 pt-36 pb-16">
@@ -83,6 +86,7 @@ const Journal = () => (
       ))}
     </section>
   </PageShell>
-)
+  )
+}
 
 export default Journal

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { ArrowRight, Clock, MapPin, Calendar } from 'lucide-react'
@@ -17,6 +18,7 @@ const Contact = () => {
     defaultValues: { name: '', email: '', company: '', focus: 'clarity', message: '' },
   })
   const { submitInquiry, status, message } = useInquiry()
+  useEffect(() => { document.title = 'Contact — ÆTHER' }, [])
 
   const onSubmit = async (values) => {
     await submitInquiry(values)
