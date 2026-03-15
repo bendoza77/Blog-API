@@ -1,25 +1,78 @@
-import useNavigationActions from '../hooks/useNavigationActions'
+import { motion, useInView } from 'framer-motion'
+import { useRef } from 'react'
+import { ArrowRight, Download } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+
+const ease = [0.22, 1, 0.36, 1]
 
 const CallToAction = () => {
-  const { bookWorkshop, downloadDeck } = useNavigationActions()
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
+  const navigate = useNavigate()
+
+  const downloadDeck = () => window.open('https://www.figma.com/community', '_blank')
+
   return (
-  <section className="mx-auto max-w-4xl px-6 pb-20">
-    <div className="rounded-[32px] border border-white/30 bg-gradient-to-r from-[#5b21b6] via-[#7c3aed] to-[#0ea5e9] px-8 py-12 text-white shadow-[0_50px_120px_-70px_rgba(91,33,182,0.85)]">
-      <div className="space-y-6 text-center">
-        <p className="text-xs uppercase tracking-[0.6em] text-white/50">Now booking Q2 residencies</p>
-        <h2 className="text-3xl font-semibold md:text-4xl">
-          Let’s craft your next meaningful product ritual
-        </h2>
-        <p className="text-sm text-white/80">
-          Studio, sprint, or advisory partnership—we design the playbook made for your flow.
-        </p>
-        <div className="flex flex-wrap justify-center gap-4 text-xs uppercase tracking-[0.4em]">
-          <button onClick={bookWorkshop} className="rounded-full bg-white px-6 py-3 text-[#5b21b6]">Book a workshop</button>
-          <button onClick={downloadDeck} className="rounded-full border border-white/40 px-6 py-3">Download deck</button>
+    <section className="mx-auto max-w-5xl px-6 py-24" ref={ref}>
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.8, ease }}
+        className="relative overflow-hidden rounded-3xl px-10 py-16 md:px-16 md:py-20 text-center"
+        style={{ background: 'linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0f0f1a 100%)', border: '1px solid rgba(129,140,248,0.2)' }}
+      >
+        {/* Orbs */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full opacity-30"
+          style={{ background: 'radial-gradient(circle, #6366f1, transparent)', filter: 'blur(70px)' }} />
+        <div className="absolute bottom-0 right-0 w-48 h-48 rounded-full opacity-20"
+          style={{ background: 'radial-gradient(circle, #fbbf24, transparent)', filter: 'blur(60px)' }} />
+
+        <div className="relative space-y-6">
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.6, ease, delay: 0.2 }}
+            className="section-label"
+          >
+            Now booking Q2 residencies
+          </motion.span>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, ease, delay: 0.3 }}
+            className="font-display font-bold text-3xl md:text-5xl text-main leading-tight"
+          >
+            Let's craft your next<br />
+            <span className="gradient-text">meaningful ritual</span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.6, ease, delay: 0.4 }}
+            className="text-muted text-base max-w-md mx-auto"
+          >
+            Studio, sprint, or advisory partnership — we design the playbook made for your flow.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, ease, delay: 0.5 }}
+            className="flex flex-wrap justify-center gap-4 pt-2"
+          >
+            <button onClick={() => navigate('/contact')} className="btn-primary">
+              Book a workshop <ArrowRight className="h-4 w-4" />
+            </button>
+            <button onClick={downloadDeck} className="btn-ghost">
+              <Download className="h-4 w-4" /> Download deck
+            </button>
+          </motion.div>
         </div>
-      </div>
-    </div>
-  </section>
-)}
+      </motion.div>
+    </section>
+  )
+}
 
 export default CallToAction

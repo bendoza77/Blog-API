@@ -18,7 +18,7 @@ const useAiChat = () => {
     setError('')
 
     try {
-      const { data } = await api.post('api/ai/chat', { question })
+      const { data } = await api.post('/api/ai/chat', { question })
       setMessages((prev) => [...prev, { role: 'assistant', content: data.data.answer }])
       setStatus('success')
     } catch (err) {

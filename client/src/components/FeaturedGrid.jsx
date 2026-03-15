@@ -1,68 +1,92 @@
-import { motion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
+import { useRef } from 'react'
+import { ArrowRight, Clock } from 'lucide-react'
 import { featuredArticles } from '../data/articles'
+import { useNavigate } from 'react-router-dom'
 
-const cardVariant = {
-  hidden: { opacity: 0, y: 20 },
-  show: (i) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.1, duration: 0.6, ease: 'easeOut' },
-  }),
+const ease = [0.22, 1, 0.36, 1]
+
+const ArticleCard = ({ article, index }) => {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-60px' })
+
+  return (
+    <motion.article
+      ref={ref}
+      initial={{ opacity: 0, y: 40 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7, ease, delay: index * 0.1 }}
+      className="glass rounded-2xl overflow-hidden card-lift group"
+    >
+      {/* Image */}
+      <div className="relative overflow-hidden h-52">
+        <img
+          src={article.cover}
+          alt={article.title}
+          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(6,6,14,0.6) 0%, transparent 60%)' }} />
+        <div className="absolute top-4 left-4 flex gap-2 flex-wrap">
+          {article.tags.slice(0, 2).map((tag) => (
+            <span key={tag} className="tag">{tag}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="p-6 space-y-3">
+        <div className="flex items-center gap-3">
+          <span className="section-label">{article.category}</span>
+          <span className="text-ghost" style={{ fontSize: '0.65rem' }}>·</span>
+          <span className="flex items-center gap-1 text-ghost" style={{ fontSize: '0.65rem' }}>
+            <Clock className="h-3 w-3" /> {article.time}
+          </span>
+        </div>
+        <h3 className="font-display font-bold text-lg text-main leading-snug">{article.title}</h3>
+        <p className="text-muted text-sm leading-relaxed line-clamp-2">{article.excerpt}</p>
+        <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary pt-1 group-hover:gap-3 transition-all duration-200">
+          Read article <ArrowRight className="h-3 w-3" />
+        </div>
+      </div>
+    </motion.article>
+  )
 }
 
-const FeaturedGrid = () => (
-  <section className="mx-auto max-w-6xl px-6 py-16">
-    <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-      <div>
-        <p className="text-xs uppercase tracking-[0.5em] text-[#7c3aed]">Latest explorations</p>
-        <h2 className="mt-3 text-3xl font-semibold text-[#161134]">
-          Craft your design playbook
-        </h2>
-      </div>
-      <button
-        onClick={() => (window.location.href = '/journal')}
-        className="text-sm uppercase tracking-[0.3em] text-[#5f6c80]"
-      >
-        View all articles →
-      </button>
-    </div>
+const FeaturedGrid = () => {
+  const navigate = useNavigate()
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
 
-    <div className="mt-10 grid gap-6 md:grid-cols-3">
-      {featuredArticles.map((article, index) => (
-        <motion.article
-          key={article.id}
-          custom={index}
-          variants={cardVariant}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.3 }}
-          className="group rounded-3xl border border-white/50 bg-white/80 p-5 shadow-[0_35px_100px_-60px_rgba(124,58,237,0.4)] backdrop-blur-2xl transition hover:-translate-y-1"
+  return (
+    <section className="mx-auto max-w-6xl px-6 py-24">
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 20 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.6, ease }}
+        className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between mb-12"
+      >
+        <div className="space-y-3">
+          <span className="section-label">Latest explorations</span>
+          <h2 className="font-display font-bold text-3xl md:text-4xl text-main">
+            Craft your design playbook
+          </h2>
+        </div>
+        <button
+          onClick={() => navigate('/journal')}
+          className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted hover:text-primary transition-colors duration-200"
         >
-          <div className="overflow-hidden rounded-2xl">
-            <img
-              src={article.cover}
-              alt={article.title}
-              className="h-48 w-full object-cover transition duration-700 group-hover:scale-110"
-            />
-          </div>
-          <div className="mt-5 flex items-center gap-3 text-xs uppercase tracking-[0.4em] text-[#7c3aed]">
-            <span>{article.category}</span>
-            <span>•</span>
-            <span>{article.time}</span>
-          </div>
-          <h3 className="mt-3 text-xl font-semibold text-[#161134]">{article.title}</h3>
-          <p className="mt-2 text-sm text-[#5f6c80]">{article.excerpt}</p>
-          <div className="mt-4 flex flex-wrap gap-2 text-[11px] uppercase tracking-[0.3em] text-[#7c3aed]">
-            {article.tags.map((tag) => (
-              <span key={tag} className="rounded-full border border-[#7c3aed]/30 px-3 py-1 text-[#7c3aed]">
-                {tag}
-              </span>
-            ))}
-          </div>
-        </motion.article>
-      ))}
-    </div>
-  </section>
-)
+          View all articles <ArrowRight className="h-3.5 w-3.5" />
+        </button>
+      </motion.div>
+
+      <div className="grid gap-6 md:grid-cols-3">
+        {featuredArticles.map((article, i) => (
+          <ArticleCard key={article.id} article={article} index={i} />
+        ))}
+      </div>
+    </section>
+  )
+}
 
 export default FeaturedGrid

@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: process.env.CLIENT_URL || (process.env.NODE_ENV === "dev" ? "http://localhost:5173" : undefined),
     methods: ["GET", "POST", "PATCH", "DELETE"],
     credentials: true,
   })

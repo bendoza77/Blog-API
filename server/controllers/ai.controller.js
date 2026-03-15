@@ -17,10 +17,10 @@ const chatWithStudio = async (req, res, next) => {
       status: "success",
       data: { answer },
     });
-  } catch(error) {
-    console.log(error);
-    return next(new AppError("Studio AI is unavailable right now. Try again soon.", 503));
-
+  } catch (error) {
+    console.error("AI chat error:", error.message || error);
+    const message = error.message || "Studio AI is unavailable right now. Try again soon.";
+    return next(new AppError(message, 503));
   }
 };
 

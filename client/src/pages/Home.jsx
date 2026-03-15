@@ -1,14 +1,12 @@
 import Hero from '../components/Hero'
 import TextMarquee from '../components/TextMarquee'
+import ActionNarrative from '../components/ActionNarrative'
 import FeaturedGrid from '../components/FeaturedGrid'
 import InsightsBar from '../components/InsightsBar'
-import Services from '../components/Services'
+import ActionGrid from '../components/ActionGrid'
+import Stories from '../components/Stories'
 import Gallery from '../components/Gallery'
 import CallToAction from '../components/CallToAction'
-import ActionGrid from '../components/ActionGrid'
-import ActionNarrative from '../components/ActionNarrative'
-import Stories from '../components/Stories'
-
 import PageShell from '../components/PageShell'
 
 const Home = () => (
@@ -20,7 +18,6 @@ const Home = () => (
     <InsightsBar />
     <ActionGrid />
     <Stories />
-    <Services />
     <Gallery />
     <CallToAction />
   </PageShell>

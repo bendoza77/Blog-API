@@ -1,16 +1,20 @@
-import PageShell from '../components/PageShell'
+import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
+import { ArrowRight, Clock, MapPin, Calendar } from 'lucide-react'
 import useInquiry from '../hooks/useInquiry'
+import PageShell from '../components/PageShell'
+
+const ease = [0.22, 1, 0.36, 1]
+
+const meta = [
+  { icon: Clock,    label: 'Response time',          value: '48 hrs' },
+  { icon: Calendar, label: 'Current availability',   value: 'April 2025' },
+  { icon: MapPin,   label: 'Studios',                value: 'Remote / NYC' },
+]
 
 const Contact = () => {
   const { register, handleSubmit, reset } = useForm({
-    defaultValues: {
-      name: '',
-      email: '',
-      company: '',
-      focus: 'clarity',
-      message: '',
-    },
+    defaultValues: { name: '', email: '', company: '', focus: 'clarity', message: '' },
   })
   const { submitInquiry, status, message } = useInquiry()
 
@@ -20,95 +24,139 @@ const Contact = () => {
   }
 
   return (
-  <PageShell className="mx-auto max-w-5xl px-6 py-16">
-    <div className="rounded-[32px] border border-white/40 bg-white/85 p-10 shadow-[0_40px_120px_-80px_rgba(91,33,182,0.45)]">
-      <div className="space-y-6 text-center">
-        <p className="text-xs uppercase tracking-[0.6em] text-[#7c3aed]">Collaborate</p>
-        <h1 className="text-4xl font-semibold text-[#161134]">
-          Let’s design the next chapter
-        </h1>
-        <p className="text-base text-[#5f6c80]">
-          Tell us about your product, your ritual, and what success looks like.
-        </p>
-      </div>
+    <PageShell>
+      <section className="mx-auto max-w-6xl px-6 pt-36 pb-24">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease }}
+          className="mb-16 space-y-4 max-w-2xl"
+        >
+          <span className="section-label">Collaborate</span>
+          <h1 className="font-display font-bold text-main leading-tight"
+            style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)' }}>
+            Let's design the next chapter
+          </h1>
+          <p className="text-muted text-lg leading-relaxed">
+            Tell us about your product, your ritual, and what success looks like.
+          </p>
+        </motion.div>
 
-      <form className="mt-10 grid gap-6 md:grid-cols-2" onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-2">
-          <label className="text-xs uppercase tracking-[0.4em] text-[#7c3aed]/80">Name</label>
-          <input
-            {...register('name', { required: true })}
-            className="rounded-2xl border border-white/40 bg-white/70 px-4 py-3"
-            placeholder="Nora Castillo"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label className="text-xs uppercase tracking-[0.4em] text-[#7c3aed]/80">Email</label>
-          <input
-            {...register('email', { required: true })}
-            className="rounded-2xl border border-white/40 bg-white/70 px-4 py-3"
-            placeholder="hello@studio.com"
-            type="email"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label className="text-xs uppercase tracking-[0.4em] text-[#7c3aed]/80">Company</label>
-          <input
-            {...register('company')}
-            className="rounded-2xl border border-white/40 bg-white/70 px-4 py-3"
-            placeholder="Studio / team"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label className="text-xs uppercase tracking-[0.4em] text-[#7c3aed]/80">Focus</label>
-          <select
-            {...register('focus')}
-            className="rounded-2xl border border-white/40 bg-white/70 px-4 py-3"
+        <div className="grid gap-12 md:grid-cols-[1fr_360px]">
+          {/* Form */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease, delay: 0.1 }}
           >
-            <option value="clarity">Clarity</option>
-            <option value="motion">Motion</option>
-            <option value="intent">Intent</option>
-            <option value="strategy">Strategy</option>
-          </select>
-        </div>
-        <div className="flex flex-col gap-2 md:col-span-2">
-          <label className="text-xs uppercase tracking-[0.4em] text-[#7c3aed]/80">Project vision</label>
-          <textarea
-            rows="4"
-            {...register('message', { required: true })}
-            className="rounded-2xl border border-white/40 bg-white/70 px-4 py-3"
-            placeholder="Product, timeline, rituals, or any inspirations."
-          ></textarea>
-        </div>
-        <div className="md:col-span-2 flex justify-end">
-          <button
-            type="submit"
-            disabled={status === 'loading'}
-            className="rounded-full bg-gradient-to-r from-[#7c3aed] via-[#5b21b6] to-[#0ea5e9] px-7 py-3 text-xs uppercase tracking-[0.4em] text-white shadow-lg disabled:opacity-70"
-          >
-            {status === 'loading' ? 'Sending…' : 'Share brief'}
-          </button>
-        </div>
-      </form>
-      {message && (
-        <p className="mt-6 text-center text-sm text-[#5f6c80]">{message}</p>
-      )}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="section-label">Name</label>
+                  <input
+                    {...register('name', { required: true })}
+                    className="input-field"
+                    placeholder="Nora Castillo"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="section-label">Email</label>
+                  <input
+                    {...register('email', { required: true })}
+                    type="email"
+                    className="input-field"
+                    placeholder="hello@studio.com"
+                  />
+                </div>
+              </div>
 
-      <div className="mt-12 grid gap-4 text-sm uppercase tracking-[0.3em] text-[#5f6c80] md:grid-cols-3">
-        <div className="rounded-2xl border border-white/40 px-4 py-4">
-          <p className="text-xs text-[#7c3aed]/70">Response time</p>
-          <p className="text-lg text-[#161134]">48 hrs</p>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="section-label">Company</label>
+                  <input
+                    {...register('company')}
+                    className="input-field"
+                    placeholder="Studio / team name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="section-label">Focus area</label>
+                  <select {...register('focus')} className="input-field" style={{ cursor: 'pointer' }}>
+                    <option value="clarity">Clarity</option>
+                    <option value="motion">Motion</option>
+                    <option value="intent">Intent</option>
+                    <option value="strategy">Strategy</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="section-label">Project vision</label>
+                <textarea
+                  rows={5}
+                  {...register('message', { required: true })}
+                  className="input-field resize-none"
+                  placeholder="Describe your product, timeline, goals, or any inspirations…"
+                />
+              </div>
+
+              <div className="flex items-center gap-4 pt-2">
+                <button
+                  type="submit"
+                  disabled={status === 'loading'}
+                  className="btn-primary disabled:opacity-50"
+                >
+                  {status === 'loading' ? 'Sending…' : 'Share brief'}
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+                {message && (
+                  <p className="text-sm text-muted">{message}</p>
+                )}
+              </div>
+            </form>
+          </motion.div>
+
+          {/* Sidebar */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease, delay: 0.2 }}
+            className="space-y-4"
+          >
+            {meta.map(({ icon: Icon, label, value }) => (
+              <div key={label} className="glass rounded-2xl px-6 py-5 flex items-center gap-4">
+                <div className="w-9 h-9 rounded-xl glass2 flex items-center justify-center flex-shrink-0">
+                  <Icon className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="section-label">{label}</p>
+                  <p className="text-main font-semibold text-lg mt-0.5">{value}</p>
+                </div>
+              </div>
+            ))}
+
+            <div className="glass rounded-2xl px-6 py-6 space-y-3">
+              <p className="section-label">What to expect</p>
+              <ul className="space-y-2">
+                {[
+                  'Intro call within 48 hours',
+                  'Custom proposal in 5 days',
+                  'Kickoff workshop within 2 weeks',
+                  'Weekly check-ins throughout',
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm text-muted">
+                    <span className="mt-1 h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ background: 'var(--primary)' }} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </motion.div>
         </div>
-        <div className="rounded-2xl border border-white/40 px-4 py-4">
-          <p className="text-xs text-[#7c3aed]/70">Current availability</p>
-          <p className="text-lg text-[#161134]">April 2025</p>
-        </div>
-        <div className="rounded-2xl border border-white/40 px-4 py-4">
-          <p className="text-xs text-[#7c3aed]/70">Studios</p>
-          <p className="text-lg text-[#161134]">Remote / NYC</p>
-        </div>
-      </div>
-    </div>
-  </PageShell>
-)}
+      </section>
+    </PageShell>
+  )
+}
 
 export default Contact

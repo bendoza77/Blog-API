@@ -4,17 +4,20 @@ const ThemeContext = createContext()
 
 export const ThemeProvider = ({ children }) => {
   const [scheme, setScheme] = useState(() =>
-    window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
   )
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', scheme === 'dark')
+    // Dark is default (no class). Light mode adds the 'light' class.
+    document.documentElement.classList.toggle('light', scheme === 'light')
   }, [scheme])
 
   const toggle = () => setScheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
 
   return (
-    <ThemeContext.Provider value={{ scheme, toggle }}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={{ scheme, toggle }}>
+      {children}
+    </ThemeContext.Provider>
   )
 }
 

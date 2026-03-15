@@ -1,40 +1,87 @@
+import { motion } from 'framer-motion'
+import { ArrowRight, Clock, Tag } from 'lucide-react'
 import { featuredArticles } from '../data/articles'
-
 import PageShell from '../components/PageShell'
 
-const Journal = () => (
-  <PageShell className="mx-auto max-w-5xl space-y-10 px-6 py-16">
-    <header>
-      <p className="text-xs uppercase tracking-[0.6em] text-[#7c3aed]">Journal</p>
-      <h1 className="mt-4 text-4xl font-semibold text-[#161134]">
-        Essays, frameworks, and visual notes
-      </h1>
-      <p className="mt-4 max-w-2xl text-base text-[#5f6c80]">
-        Deep dives into product rituals, motion systems, and creative technology.
-      </p>
-    </header>
+const ease = [0.22, 1, 0.36, 1]
 
-    <div className="space-y-8">
-      {featuredArticles.map((article) => (
-        <article key={article.id} className="rounded-3xl border border-white/50 bg-white/80 p-6 shadow-[0_30px_90px_-60px_rgba(91,33,182,0.4)]">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-[0.5em] text-[#7c3aed]">{article.category}</p>
-              <h2 className="mt-2 text-2xl font-semibold text-[#161134]">
-                {article.title}
-              </h2>
-              <p className="mt-1 text-sm text-[#5f6c80]">{article.excerpt}</p>
+const Journal = () => (
+  <PageShell>
+    {/* Hero */}
+    <section className="mx-auto max-w-6xl px-6 pt-36 pb-16">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease }}
+        className="space-y-5 max-w-2xl"
+      >
+        <span className="section-label">Journal</span>
+        <h1 className="font-display font-bold leading-tight text-main"
+          style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)' }}>
+          Essays, frameworks &amp; visual notes
+        </h1>
+        <p className="text-muted text-lg leading-relaxed">
+          Deep dives into product rituals, motion systems, and creative technology from the ÆTHER studio.
+        </p>
+      </motion.div>
+    </section>
+
+    {/* Divider */}
+    <div className="hr" />
+
+    {/* Articles */}
+    <section className="mx-auto max-w-6xl px-6 py-16 space-y-5">
+      {featuredArticles.map((article, i) => (
+        <motion.article
+          key={article.id}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, ease, delay: i * 0.1 }}
+          className="glass rounded-2xl p-7 card-lift group"
+        >
+          <div className="flex flex-col gap-5 md:flex-row md:items-center">
+            {/* Image */}
+            <div className="md:w-48 md:flex-shrink-0 overflow-hidden rounded-xl">
+              <img
+                src={article.cover}
+                alt={article.title}
+                className="w-full h-36 md:h-32 object-cover transition-transform duration-500 group-hover:scale-105"
+              />
             </div>
+
+            {/* Content */}
+            <div className="flex-1 space-y-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="section-label">{article.category}</span>
+                <span className="text-ghost text-xs">·</span>
+                <span className="flex items-center gap-1 text-ghost text-xs">
+                  <Clock className="h-3 w-3" /> {article.time}
+                </span>
+              </div>
+
+              <h2 className="font-display font-bold text-xl text-main leading-snug">{article.title}</h2>
+              <p className="text-muted text-sm leading-relaxed line-clamp-2">{article.excerpt}</p>
+
+              <div className="flex flex-wrap items-center gap-3">
+                {article.tags.map((tag) => (
+                  <span key={tag} className="flex items-center gap-1 tag">
+                    <Tag className="h-2.5 w-2.5" /> {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* CTA */}
             <button
               onClick={() => window.open(`https://blog.example.com/${article.id}`, '_blank')}
-              className="self-start rounded-full border border-[#7c3aed]/40 px-6 py-3 text-xs uppercase tracking-[0.4em] text-[#7c3aed]"
+              className="flex-shrink-0 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary hover:gap-3 transition-all duration-200"
             >
-              Read article
+              Read article <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </div>
-        </article>
+        </motion.article>
       ))}
-    </div>
+    </section>
   </PageShell>
 )
 
